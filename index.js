@@ -1,6 +1,7 @@
 import express from "express";
 import bodyParser from "body-parser";
 import Twitter from "twitter";
+import {upsert_user, upsert_supplier, get_matches} from "./mongoMethods";
 
 var app = express();
 app.use(bodyParser.urlencoded({extended: false}));
@@ -32,53 +33,32 @@ setInterval(() => {
 	client.get('search/tweets', {q: '#VeneMedicina'}, function(error, tweets, response) {
 		let tweet_collection = tweets.statuses;
 		tweet_collection.forEach((tweet) => {
-			console.log("text: " + tweet.text);
-			console.log("user: " + tweet.user.screen_name);
-     console.log("timestamp: " + tweet.created_at)
+			let user = tweet.user.screen_name;
+			let timestamp = tweet.created_at;
+			let medicine = 'insulin 50mg';
+			let location = 'san francisco';
+			upsert_user(user, medicine, location, timestamp);
 		})
 	});
 	// Get users who have medication
-	client.get('statuses/mentions_timeline', {count: 10}, (error, tweets, response) => {
+	client.get('statuses/mentions_timeline', {count: 1}, (error, tweets, response) => {
 		tweets.forEach((tweet) => {
-			console.log("text: " + tweet.text);
-			console.log("user: " + tweet.user.screen_name);
-	   	console.log("timestamp: " + tweet.created_at)
+			let user = tweet.user.screen_name;
+			let timestamp = tweet.created_at;
+			let medicine = 'insulin 50mg';
+			let location = 'san francisco';
+			upsert_supplier(user, medicine, location, timestamp);
 		})
 	})
 	// Match users from DB and send out post
-	get_matches().then(matches => {
-		matches.forEach(match => {
-			let status_string = sendStatus(match.user, match.suppliers, match.location, match.medicine)
-			client.post('statuses/update', {status: status_string}, function(error, tweet, response) {
-			  if (!error) {
-			    console.log(tweet);
-			  }
-			});
-		})
+	get_matches().then(match => {
+		let status_string = sendStatus(match.user, match.suppliers, match.location, match.medicine)
+		client.post('statuses/update', {status: status_string}, function(error, tweet, response) {
+		  if (!error) {
+		    console.log(tweet);
+		  }
+		});
 	})
 })
 
-// 	client.get('statuses/mentions_timeline', {count: 10}, (error, tweets, response) => {
-// 		console.log(tweets);
-// 	})
-// }, 10000);
-
-// var status_string = sendStatus('ckrox', ['user1','user2','user3'], 'sunnyvale', 'my asshole')
-// client.post('statuses/update', {status: status_string}, function(error, tweet, response) {
-//   if (!error) {
-//     console.log(tweet);
-//   }
-// });
-
-// client.get('search/tweets', {q: '#helpme'}, function(error, tweets, response) {
-//    console.log(tweets.statuses.length);
-// });
-
-// client.get('statuses/mentions_timeline', {count: 10}, (error, tweets, response) => {
-// 	tweets.forEach((tweet) => {
-// 		console.log("text: " + tweet.text);
-// 		console.log("user: " + tweet.user.screen_name);
-//    	console.log("timestamp: " + tweet.created_at)
-// 	})
-// })
 
