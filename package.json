@@ -1,0 +1,33 @@
+{
+  "name": "hackathon",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "engines": {
+    "node": "8.4.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "babel-node index.js"
+  },
+  "author": "Chen Kuang",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.17.2",
+    "chance": "^1.0.18",
+    "express": "^4.16.4",
+    "later": "^1.2.0",
+    "moment": "^2.22.2",
+    "mongodb": "^2.2.33",
+    "request": "^2.88.0",
+    "request-promise": "^4.2.1",
+    "twitter": "^1.7.1"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.24.1",
+    "babel-core": "^6.26.3",
+    "babel-preset-env": "^1.7.0",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-register": "^6.26.0"
+  }
+}
